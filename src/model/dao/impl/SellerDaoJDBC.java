@@ -50,29 +50,38 @@ public class SellerDaoJDBC implements SellerDao {
 			st.setInt(1, id);// id da linha 33
 			rs = st.executeQuery();
 			if (rs.next()) { // Nao tiver reultado sai do if e retorna nulo. Se tiver
-				Department dep = new Department(); // variavel temporaria
-				dep.setId(rs.getInt("DepartmentId")); // Nome da coluna que esta no banco
-				dep.setName(rs.getString("DEpName")); // Nome do departament no banco
-
+				Department dep = instantiateDepartment(rs); // chamada da funcao
 				// Criando o objeto seller que vai apontar para o departamento
 
-				Seller obj = new Seller();
-				obj.setId(rs.getInt("Id")); // nome da coluna que esta no banco
-				obj.setName(rs.getString("Name")); // nome da coluna esta no banco
-				obj.setEmail(rs.getString("Email"));// nome da coluna esta no banco
-				obj.setBaseSalary(rs.getDouble("BaseSalary"));
-				obj.setBirthDate(rs.getDate("BirthDate"));
-				obj.setDepartment(dep); // Associacao de objetos montado
+				Seller obj = instantiateSeller(rs, dep);
 				return obj;
 			}
 			return null;
 		} catch (SQLException e) {
 			throw new DbException(e.getMessage()); // Excessao personalizada
-		}
-		finally {
+		} finally {
 			DB.closeStatement(st);
 			DB.closeResultSet(rs);
 		}
+
+	}
+
+	private Seller instantiateSeller(ResultSet rs, Department dep) throws SQLException {
+		Seller obj = new Seller();
+		obj.setId(rs.getInt("Id")); // nome da coluna que esta no banco
+		obj.setName(rs.getString("Name")); // nome da coluna esta no banco
+		obj.setEmail(rs.getString("Email"));// nome da coluna esta no banco
+		obj.setBaseSalary(rs.getDouble("BaseSalary"));
+		obj.setBirthDate(rs.getDate("BirthDate"));
+		obj.setDepartment(dep); // Associacao de objetos montado
+		return obj;
+	}
+
+	private Department instantiateDepartment(ResultSet rs) throws SQLException {
+		Department dep = new Department(); // variavel temporaria
+		dep.setId(rs.getInt("DepartmentId")); // Nome da coluna que esta no banco
+		dep.setName(rs.getString("DEpName")); // Nome do departament no banco
+		return dep;
 
 	}
 
