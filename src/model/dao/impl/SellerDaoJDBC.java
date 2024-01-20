@@ -96,7 +96,23 @@ public class SellerDaoJDBC implements SellerDao {
 
 	@Override
 	public void deleteById(Integer id) {
-		// TODO Auto-generated method stub
+		PreparedStatement st = null;
+		try {
+			//instanciar o st
+			st = conn.prepareStatement("DELETE FROM seller WHERE Id = ? ");
+			
+			// configurar o valor do placeroulder
+			st.setInt(1, id);
+			
+		    st.executeUpdate();
+			
+		}
+		catch(SQLException e) {
+			throw new DbException(e.getMessage());// minha excessao personalizada
+		}
+		finally {
+			DB.closeStatement(st);
+		}
 
 	}
 
